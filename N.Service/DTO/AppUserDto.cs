@@ -1,0 +1,33 @@
+﻿using Google.Apis.Drive.v3.Data;
+using N.Model.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace N.Service.DTO
+{
+    public class AppUserDto
+    {
+        public string? Id { get; set; }
+        public string? Name { get; set; }
+        public string? Email { get; set; }
+        public string? Gender { get; set; }
+        public string? Picture { get; set; }
+        public string? Token { get; set; }
+        public string? RefreshToken { get; set; }
+
+        public static AppUserDto FromAppUser(AppUser user)
+        {
+            return new AppUserDto()
+            {
+                Gender = user.Gender,
+                Id = user.Id.ToString(),
+                Email = user.Email,
+                Name = user.Name,
+                Picture = user.Picture,
+            };
+        }
+    }
+}

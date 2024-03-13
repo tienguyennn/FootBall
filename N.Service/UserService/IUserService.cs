@@ -1,0 +1,23 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using N.Model.Entities;
+using N.Service.Common;
+using N.Service.DTO;
+
+namespace N.Service.UserService
+{
+    public interface IUserService
+    {
+        Task<AppUser?> GetUser(string? id);
+        Task<DataResponse> RegisterUser(string email, string name, string gender, string type, string password, string confirmPassword, string baseUri);
+        Task<DataResponse> ConfirmEmail(string email, string token);
+        Task<DataResponse<AppUserDto>> LoginUser(string email, string password);
+        Task<DataResponse<string>> ResetPassword(string email, string baseUri);
+        Task<DataResponse<AppUserDto>> ChangePassword(string id, string oldPassword, string newPassword, string confirmPassword);
+        Task<DataResponse<AppUserDto>> RefreshToken(string refreshToken);
+        Task<DataResponse<AppUserDto>> CheckLogin(string? id);
+        Task<DataResponse> LogoutUser();
+        Task<DataResponse<AppUserDto>> Update(AppUser user);
+        Task<DataResponse<AppUserDto>> UploadAvatar(string id, IFormFile file);
+    }
+}
