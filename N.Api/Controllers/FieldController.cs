@@ -119,7 +119,7 @@ namespace N.Controllers
                     DataResponse<Field>.False(ex.Message);
                 }
             }
-            return DataResponse<Field>.False("Some properties are not valid", );
+            return DataResponse<Field>.False("Some properties are not valid", ModelStateError);
         }
 
 
