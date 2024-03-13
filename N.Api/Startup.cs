@@ -47,7 +47,7 @@ namespace N
                     }
                 });
             });
-            services.AddSignalR();
+            //services.AddSignalR();
             services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
             services.Configure<FormOptions>(options => { options.MultipartBodyLengthLimit = 1048576000; });

@@ -21,11 +21,11 @@ namespace N.Service.Common
         public int PageSize { get; }
         public int TotalCount { get; }
 
-        public static PagedList<T> Create(IQueryable<T> query, int pageIndex, int pageSize)
+        public static PagedList<T> Create(IQueryable<T> query, SearchBase search)
         {
             var totalCount = query.Count();
-            var items = query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-            return new PagedList<T>(items, pageIndex, pageSize, totalCount);
+            var items = query.Skip((search.PageIndex - 1) * search.PageSize).Take(search.PageSize).ToList();
+            return new PagedList<T>(items, search.PageIndex, search.PageSize, totalCount);
         }
     }
 }

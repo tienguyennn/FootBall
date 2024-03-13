@@ -33,6 +33,8 @@ namespace N.Service.FieladService
                                 Picture = q.Picture,
                                 UserId = q.UserId,
                                 Price = q.Price,
+                                StaffId = q.StaffId,
+                                Status = q.Status,
                             };
 
 
@@ -40,9 +42,16 @@ namespace N.Service.FieladService
                 {
                     query = query.Where(x => x.UserId == search.UserId);
                 }
+                if (search.StaffId.HasValue)
+                {
+                    query = query.Where(x => x.StaffId == search.StaffId);
+                }
+                if (!string.IsNullOrEmpty(search.Status))
+                {
+                    query = query.Where(x => x.Status == search.Status);
+                }
 
-                var result = PagedList<FieldDto>.Create(query, search.PageIndex, search.PageSize);
-
+                var result = PagedList<FieldDto>.Create(query, search);
                 return new DataResponse<PagedList<FieldDto>>()
                 {
                     Data = result,

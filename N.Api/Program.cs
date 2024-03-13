@@ -41,12 +41,12 @@ app.UseSwaggerUI();
 app.UseDeveloperExceptionPage();
 
 //app.UseMiddleware<FileProtectedMiddleware>();
-//app.UseStaticFiles(new StaticFileOptions
-//{
-//    FileProvider = new PhysicalFileProvider(
-//           Path.Combine(builder.Environment.ContentRootPath, "Root")),
-//    RequestPath = "/Root",
-//});
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Root")),
+    RequestPath = "/Root",
+});
 
 //app.UseMiddleware<TokenMiddleware>();
 
@@ -55,6 +55,6 @@ app.UseDeveloperExceptionPage();
 
 app.UseHttpsRedirection();
 app.MapControllers();
-app.MapHub<ChatHub>("/chatHub");
+//app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
