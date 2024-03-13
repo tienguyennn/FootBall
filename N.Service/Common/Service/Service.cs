@@ -17,46 +17,46 @@ namespace N.Service.Common.Service
 
         public T? GetById(Guid? guid)
         {
-            if(guid == null)
+            if (guid == null)
             {
                 return null;
             }
 
             return _repository.GetById(guid.Value);
         }
-        public virtual void Create(T entity)
+        public virtual async Task Create(T entity)
         {
             _repository.Add(entity);
-            _repository.Save();
+            await _repository.Save();
         }
 
-        public virtual void Create(IEnumerable<T> entities)
+        public virtual async Task Create(IEnumerable<T> entities)
         {
             foreach (var entity in entities)
             {
                 _repository.Add(entity);
             }
-            _repository.Save();
+            await _repository.Save();
         }
 
-        public virtual void Update(T entity)
+        public virtual async Task Update(T entity)
         {
             _repository.Edit(entity);
-            _repository.Save();
+            await _repository.Save();
         }
 
-        public virtual void Update(IEnumerable<T> entities)
+        public virtual async Task Update(IEnumerable<T> entities)
         {
             foreach (var entity in entities)
             {
                 _repository.Edit(entity);
             }
-            _repository.Save();
+            await _repository.Save();
         }
-        public void Delete(T entity)
+        public async Task Delete(T entity)
         {
             _repository.Delete(entity);
-            _repository.Save();
+            await _repository.Save();
         }
         public IQueryable<T> GetQueryable()
         {

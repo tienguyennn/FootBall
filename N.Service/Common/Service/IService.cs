@@ -6,9 +6,11 @@ namespace N.Service.Common.Service
     public interface IService<T> where T : Entity
     {
         T? GetById(Guid? id);
-        void Create(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        Task Create(T entity);
+        Task Create(IEnumerable<T> entities);
+        Task Update(T entity);
+        Task Update(IEnumerable<T> entities);
+        Task Delete(T entity);
         IQueryable<T> GetQueryable();
     }
 }

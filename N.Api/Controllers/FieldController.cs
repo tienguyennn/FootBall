@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using N.Api.ViewModels;
 using N.Model.Entities;
 using N.Service.Common;
+using N.Service.Constant;
 using N.Service.DTO;
 using N.Service.FieladService;
 using N.Service.FieldService.Dto;
@@ -43,8 +44,9 @@ namespace N.Controllers
                         Name = model.Name,
                         Price = model.Price,
                         UserId = UserId,
+                        Status = FieldStatusConstant.Pending,
                     };
-                    if(model.Picture != null && model.Picture.Length > 0)
+                    if (model.Picture != null && model.Picture.Length > 0)
                     {
                         var upload = await UploadFile.Save(model.Picture);
                         if (upload.Success)
@@ -54,7 +56,7 @@ namespace N.Controllers
                     }
 
 
-                    _fieldService.Create(entity);
+                  await  _fieldService.Create(entity);
                     return new DataResponse<Field>() { Data = entity, Success = true };
                 }
                 catch (Exception ex)
@@ -87,7 +89,7 @@ namespace N.Controllers
                             entity.Picture = upload.Path;
                         }
                     }
-                    _fieldService.Update(entity);
+                   await _fieldService.Update(entity);
                     return new DataResponse<Field>() { Data = entity, Success = true };
                 }
                 catch (Exception ex)
@@ -97,6 +99,30 @@ namespace N.Controllers
             }
             return DataResponse<Field>.False("Some properties are not valid", ModelState.Values.SelectMany(v => v.Errors.Select(x => x.ErrorMessage)));
         }
+
+        [HttpPost("UpdateStatus")]
+        public async Task<DataResponse<Field>> UpdateStatus([FromBody] FieldUpdateStatusVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var entity = _fieldService.GetById(model.Id);
+                    if (entity == null)
+                        return DataResponse<Field>.False("Field not found");
+                    entity.Status = model.Status;
+                    await _fieldService.Update(entity);
+                    return new DataResponse<Field>() { Data = entity, Success = true };
+                }
+                catch (Exception ex)
+                {
+                    DataResponse<Field>.False(ex.Message);
+                }
+            }
+            return DataResponse<Field>.False("Some properties are not valid", ModelState.Values.SelectMany(v => v.Errors.Select(x => x.ErrorMessage)));
+        }
+
+
 
         [HttpPost("GetData")]
         public DataResponse<PagedList<FieldDto>> GetData([FromBody] FieldSearch search)

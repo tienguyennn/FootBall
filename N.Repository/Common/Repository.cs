@@ -52,9 +52,9 @@ namespace N.Repository
             _entities.Entry(entity).State = EntityState.Modified;
         }
 
-        public virtual void Save()
+        public virtual async Task Save()
         {
-            _entities.SaveChanges();
+            await _entities.SaveChangesAsync();
         }
 
         public T? GetById(Guid id)

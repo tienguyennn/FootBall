@@ -11,7 +11,7 @@ namespace N.Repository
         T Add(T entity);
         T Delete(T entity);
         void Edit(T entity);
-        void Save();
+        Task Save();
         T? GetById(Guid id);
         void DeleteRange(IEnumerable<T> entities);
     }

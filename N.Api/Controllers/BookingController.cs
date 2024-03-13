@@ -26,7 +26,7 @@ namespace N.Controllers
             _logger = logger;
         }
         [HttpPost("Create")]
-        public DataResponse<Booking> Create([FromBody] BookingCreateVM model)
+        public async Task<DataResponse<Booking>> Create([FromBody] BookingCreateVM model)
         {
             if (ModelState.IsValid)
             {
@@ -41,7 +41,7 @@ namespace N.Controllers
                         UserId = UserId,
                         Description = model.Description,
                     };
-                    _bookingService.Create(entity);
+                    await _bookingService.Create(entity);
                     return new DataResponse<Booking>() { Data = entity, Success = true };
                 }
                 catch (Exception ex)
