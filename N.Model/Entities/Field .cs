@@ -10,6 +10,7 @@ namespace N.Model.Entities
         public string? Description { get; set; }
         public string? Picture { get; set; }
         public string? Address { get; set; }
+        public string? Status { get; set; }
         public float? Price { get; set; }
     }
 }
