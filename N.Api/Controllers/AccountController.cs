@@ -66,7 +66,7 @@ namespace N.Controllers
                 return result;
             }
 
-            return DataResponse<AppUserDto>.False("Some properties are not valid");
+            return DataResponse<AppUserDto>.False("Some properties are not valid", ModelStateError);
         }
 
         [HttpPost("CreateStaff")]

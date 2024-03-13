@@ -17,7 +17,7 @@ namespace N.Controllers
             get
             {
                 var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if(Guid.TryParse(id, out var userId))
+                if (Guid.TryParse(id, out var userId))
                 {
                     return userId;
                 }
@@ -34,6 +34,9 @@ namespace N.Controllers
             }
             return uriBuilder.Uri.AbsoluteUri;
         }
+
+        internal IEnumerable<string> ModelStateError
+                => ModelState.Values.SelectMany(v => v.Errors.Select(x => x.ErrorMessage));
 
     }
 
