@@ -5,6 +5,7 @@ namespace N.Model.Entities
     public class Field : Entity
     {
         public Guid? UserId { get; set; }
+        public Guid? StaffId { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public string? Picture { get; set; }
