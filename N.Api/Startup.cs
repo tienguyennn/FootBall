@@ -10,6 +10,7 @@ using N.Service.Common.Service;
 using N.Repository;
 using N.Model;
 using N.Extensions;
+using Microsoft.OpenApi.Models;
 
 namespace N
 {
@@ -21,7 +22,31 @@ namespace N
             services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(opts =>
+            {
+                opts.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme()
+                {
+                    Name = "Authen",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                opts.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type =ReferenceType.SecurityScheme,
+                                Id = JwtBearerDefaults.AuthenticationScheme,
+
+                            }
+                        }, new string[]{ } 
+                    }
+                });
+            });
             services.AddSignalR();
             services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 

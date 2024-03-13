@@ -30,7 +30,7 @@ namespace N.Controllers
         }
 
         [HttpPost("Create")]
-        public DataResponse<Field> Create([FromBody] FieldCreateVM model)
+        public async Task<DataResponse<Field>> Create([FromForm] FieldCreateVM model)
         {
             if (ModelState.IsValid)
             {
@@ -44,31 +44,49 @@ namespace N.Controllers
                         Price = model.Price,
                         UserId = UserId,
                     };
+                    if(model.Picture != null && model.Picture.Length > 0)
+                    {
+                        var upload = await UploadFile.Save(model.Picture);
+                        if (upload.Success)
+                        {
+                            entity.Picture = upload.Path;
+                        }
+                    }
+
+
                     _fieldService.Create(entity);
                     return new DataResponse<Field>() { Data = entity, Success = true };
                 }
                 catch (Exception ex)
                 {
-                   return DataResponse<Field>.False("Error", new string[] { ex.Message });
+                    return DataResponse<Field>.False("Error", new string[] { ex.Message });
                 }
             }
             return DataResponse<Field>.False("Some properties are not valid", ModelState.Values.SelectMany(v => v.Errors.Select(x => x.ErrorMessage)));
         }
 
         [HttpPost("Edit")]
-        public DataResponse<Field> Edit([FromBody] FieldEditVM model)
+        public async Task<DataResponse<Field>> Edit([FromForm] FieldEditVM model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
                     var entity = _fieldService.GetById(model.Id);
-                    if(entity == null)
+                    if (entity == null)
                         return DataResponse<Field>.False("Field not found");
                     entity.Name = model.Name;
                     entity.Description = model.Description;
                     entity.Address = model.Address;
                     entity.Price = model.Price;
+                    if (model.Picture != null && model.Picture.Length > 0)
+                    {
+                        var upload = await UploadFile.Save(model.Picture);
+                        if (upload.Success)
+                        {
+                            entity.Picture = upload.Path;
+                        }
+                    }
                     _fieldService.Update(entity);
                     return new DataResponse<Field>() { Data = entity, Success = true };
                 }
