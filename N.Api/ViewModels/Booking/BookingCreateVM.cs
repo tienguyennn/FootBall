@@ -8,5 +8,6 @@ namespace N.Api.ViewModels
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
         public string? Status { get; set; }
+        public string? Description { get; set; }
     }
 }

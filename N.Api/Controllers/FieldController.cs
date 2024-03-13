@@ -41,6 +41,7 @@ namespace N.Controllers
                         Address = model.Address,
                         Description = model.Description,
                         Name = model.Name,
+                        Price = model.Price,
                         UserId = UserId,
                     };
                     _fieldService.Create(entity);
@@ -67,7 +68,7 @@ namespace N.Controllers
                     entity.Name = model.Name;
                     entity.Description = model.Description;
                     entity.Address = model.Address;
-
+                    entity.Price = model.Price;
                     _fieldService.Update(entity);
                     return new DataResponse<Field>() { Data = entity, Success = true };
                 }

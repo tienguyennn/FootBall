@@ -32,8 +32,15 @@ namespace N.Controllers
             {
                 try
                 {
-                    var entity = _mapper.Map<Booking>(model);
-                    entity.UserId = UserId;
+                    var entity = new Booking()
+                    {
+                        Start = model.Start,
+                        End = model.End,
+                        FieldId = model.FieldId,
+                        Status = model.Status,
+                        UserId = UserId,
+                        Description = model.Description,
+                    };
                     _bookingService.Create(entity);
                     return new DataResponse<Booking>() { Data = entity, Success = true };
                 }

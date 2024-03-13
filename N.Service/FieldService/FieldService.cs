@@ -32,6 +32,7 @@ namespace N.Service.FieladService
                                 Name = q.Name,
                                 Picture = q.Picture,
                                 UserId = q.UserId,
+                                Price = q.Price,
                             };
 
 
