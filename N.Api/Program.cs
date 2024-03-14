@@ -25,12 +25,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCors(builder =>
 {
-    builder.WithOrigins("https://localhost:44324")
-    .WithOrigins("http://localhost:8080")
-    .WithOrigins("http://ndrive.somee.com")
-    .WithOrigins("http://www.ndrive.somee.com")
-    .WithOrigins("https://ndrive.somee.com")
-    .WithOrigins("https://www.ndrive.somee.com")
+    builder.WithOrigins("http://localhost:4200")
         .AllowAnyHeader()
         .WithMethods("GET", "POST")
         .AllowCredentials();

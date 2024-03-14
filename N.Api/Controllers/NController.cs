@@ -8,9 +8,7 @@ namespace N.Controllers
     [Authorize]
     public class NController : ControllerBase
     {
-        public NController()
-        {
-        }
+        public NController() { }
 
         internal Guid? UserId
         {
