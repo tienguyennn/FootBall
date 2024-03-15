@@ -455,7 +455,6 @@ namespace N.Service.UserService
                 Message = "Login success",
                 Data = userDto,
                 Success = true,
-                Expires = token.ValidTo,
             };
         }
 

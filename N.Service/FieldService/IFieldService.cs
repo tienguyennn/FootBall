@@ -11,5 +11,6 @@ namespace N.Service.FieladService
     public interface IFieldService : IService<Field>
     {
         DataResponse<PagedList<FieldDto>> GetData(FieldSearch search);
+        DataResponse<List<FieldTime>> GetFieldTimes(FieldTimeSearch search);
     }
 }

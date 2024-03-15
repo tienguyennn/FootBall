@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using N.Model.Entities;
+using N.Repository.BookingRepository;
 using N.Repository.NDirectoryRepository;
 using N.Service.Common;
 using N.Service.Common.Service;
@@ -10,12 +11,15 @@ namespace N.Service.FieladService
 {
     public class FieldService : Service<Field>, IFieldService
     {
+        private readonly IBookingRepository _bookingRepository;
         private readonly IDistributedCache _cache;
         public FieldService(
             IFieldRepository fieldRepository,
+            IBookingRepository bookingRepository,
             IDistributedCache cache
             ) : base(fieldRepository)
         {
+            this._bookingRepository = bookingRepository;
             this._cache = cache;
         }
 
@@ -57,6 +61,7 @@ namespace N.Service.FieladService
                     Data = result,
                     Message = "Success"
                 };
+
             }
             catch (Exception ex)
             {
@@ -64,5 +69,66 @@ namespace N.Service.FieladService
             }
 
         }
+        public DataResponse<List<FieldTime>> GetFieldTimes(FieldTimeSearch search)
+        {
+            try
+            {
+                var result = new List<FieldTime>();
+                var start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 5, 0, 0);
+                var end = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 0, 0);
+
+                if (search != null)
+                {
+                    if (search.Start.HasValue)
+                    {
+                        while (start > search.Start)
+                        {
+                            start = start.AddHours(-1.5);
+                        }
+                    }
+                    if (search.End.HasValue)
+                    {
+                        while (end < search.End)
+                        {
+                            start = start.AddHours(1.5);
+                        }
+                    }
+                }
+
+                var bookings = _bookingRepository.GetQueryable().Where(x => x.Start >= start && x.End <= end 
+                                &&(search == null || !search.FieldId.HasValue || x.FieldId == search.FieldId)).ToList();
+
+                while (start < end)
+                {
+                    if (start.Hour >= 5 && start.Hour < 22)
+                    {
+                        var item = new FieldTime()
+                        {
+                            FieldId = search?.FieldId,
+                            Start = start,
+                            End = start.AddHours(1.5),
+                        };
+                        if(bookings.Any(x=>x.Start >= item.Start && x.End<= item.End))
+                        {
+                            item.Booked = true;
+                        }
+                        result.Add(item);
+                    }
+                    start = start.AddHours(1.5);
+                }
+                return new DataResponse<List<FieldTime>>()
+                {
+                    Data = result,
+                    Message = "Success"
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return DataResponse<List<FieldTime>>.False(ex.Message);
+            }
+
+        }
+
     }
 }

@@ -123,11 +123,17 @@ namespace N.Controllers
         }
 
 
-
         [HttpPost("GetData")]
         public DataResponse<PagedList<FieldDto>> GetData([FromBody] FieldSearch search)
         {
             return _fieldService.GetData(search);
         }
+
+        [HttpPost("GetFieldTimes")]
+        public DataResponse<List<FieldTime>> GetFieldTimes(FieldTimeSearch search)
+        {
+            return _fieldService.GetFieldTimes(search);
+        }
+
     }
 }

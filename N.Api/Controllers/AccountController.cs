@@ -24,7 +24,6 @@ namespace N.Controllers
             _logger = logger;
             _UserService = AuthService;
         }
-
         [HttpPost("Register")]
         [AllowAnonymous]
         public async Task<DataResponse> Register([FromBody] RegisterViewModel model)
