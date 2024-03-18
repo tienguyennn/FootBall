@@ -10,11 +10,13 @@ namespace N.Service.DTO
 {
     public class AppUserDto
     {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
+        public Guid? Id { get; set; }
         public string? Email { get; set; }
+        public string? Name { get; set; }
+        public string? Phone { get; set; }
         public string? Gender { get; set; }
         public string? Picture { get; set; }
+        public string? Type { get; set; }
         public string? Token { get; set; }
         public string? RefreshToken { get; set; }
 
@@ -23,10 +25,12 @@ namespace N.Service.DTO
             return new AppUserDto()
             {
                 Gender = user.Gender,
-                Id = user.Id.ToString(),
+                Id = user.Id,
                 Email = user.Email,
                 Name = user.Name,
                 Picture = user.Picture,
+                Type = user.Type,
+                Phone = user.PhoneNumber,
             };
         }
     }

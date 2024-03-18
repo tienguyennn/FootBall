@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using N.Model.Entities;
 using N.Repository.BookingRepository;
+using N.Repository.FeeRepository;
 using N.Repository.NDirectoryRepository;
 using N.Service.Common;
 using N.Service.Common.Service;
@@ -12,14 +13,17 @@ namespace N.Service.FieladService
     public class FieldService : Service<Field>, IFieldService
     {
         private readonly IBookingRepository _bookingRepository;
+        private readonly IFeeRepository _feeRepository;
         private readonly IDistributedCache _cache;
         public FieldService(
             IFieldRepository fieldRepository,
             IBookingRepository bookingRepository,
+            IFeeRepository feeRepository,
             IDistributedCache cache
             ) : base(fieldRepository)
         {
             this._bookingRepository = bookingRepository;
+            this._feeRepository = feeRepository;
             this._cache = cache;
         }
 
@@ -69,6 +73,17 @@ namespace N.Service.FieladService
             }
 
         }
+
+        public DataResponse<List<Fee>> GetFees(Guid id)
+        {
+            var fees = _feeRepository.GetQueryable().Where(x => x.FieldId == id).ToList();
+            return new DataResponse<List<Fee>>()
+            {
+                Data = fees,
+                Success = true,
+            };
+        }
+
         public DataResponse<List<FieldTime>> GetFieldTimes(FieldTimeSearch search)
         {
             try

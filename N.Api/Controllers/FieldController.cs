@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using N.Api.ViewModels;
 using N.Model.Entities;
+using N.Service.BookingService.Dto;
 using N.Service.Common;
 using N.Service.Constant;
 using N.Service.DTO;
@@ -133,6 +134,12 @@ namespace N.Controllers
         public DataResponse<List<FieldTime>> GetFieldTimes(FieldTimeSearch search)
         {
             return _fieldService.GetFieldTimes(search);
+        }
+
+        [HttpGet("GetFees/{id}")]
+        public DataResponse<List<Fee>> GetFees(Guid id)
+        {
+            return _fieldService.GetFees(id);
         }
 
     }

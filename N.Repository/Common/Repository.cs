@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 namespace N.Repository
 {
     public class Repository<T> : IRepository<T>
-       where T : Entity
+       where T : class
     {
         protected DbContext _entities;
         protected readonly DbSet<T> _dbset;

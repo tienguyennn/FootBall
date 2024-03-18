@@ -3,7 +3,7 @@ using N.Model.Entities;
 
 namespace N.Service.Common.Service
 {
-    public interface IService<T> where T : Entity
+    public interface IService<T> where T : class
     {
         T? GetById(Guid? id);
         Task Create(T entity);

@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using N.Api.ViewModels.Account;
+using N.Service.Common;
 using N.Service.Constant;
 using N.Service.DTO;
+using N.Service.FieldService.Dto;
 using N.Service.UserService;
+using N.Service.UserService.Dto;
 using System.Security.Claims;
 
 namespace N.Controllers
@@ -31,7 +34,7 @@ namespace N.Controllers
             if (ModelState.IsValid)
             {
                 var baseUri = GetUri();
-                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Gender, AccountTypeConstant.EndUser, model.Password, model.ConfirmPassword, baseUri);
+                var result = await _UserService.RegisterUser(model.Email, model.Name,model.Phone, model.Gender, AccountTypeConstant.EndUser, model.Password, model.ConfirmPassword, baseUri);
                 return result;
 
             }
@@ -74,7 +77,22 @@ namespace N.Controllers
             if (ModelState.IsValid)
             {
                 var baseUri = GetUri();
-                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Gender, AccountTypeConstant.Staff, model.Password, model.ConfirmPassword, baseUri);
+                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, AccountTypeConstant.Staff, model.Password, model.ConfirmPassword, baseUri);
+                return result;
+
+            }
+
+            return DataResponse.False("Some properties are not valid");
+        }
+
+
+        [HttpPost("CreateManager")]
+        public async Task<DataResponse> CreateManager([FromBody] RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var baseUri = GetUri();
+                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, AccountTypeConstant.Manager, model.Password, model.ConfirmPassword, baseUri);
                 return result;
 
             }
@@ -89,7 +107,7 @@ namespace N.Controllers
             if (ModelState.IsValid)
             {
                 var baseUri = GetUri();
-                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Gender, AccountTypeConstant.FieldOwner, model.Password, model.ConfirmPassword, baseUri);
+                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, AccountTypeConstant.FieldOwner, model.Password, model.ConfirmPassword, baseUri);
                 return result;
 
             }
@@ -207,6 +225,26 @@ namespace N.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var result = await _UserService.UploadAvatar(userId, file);
             return result;
+        }
+
+
+        [HttpGet("GetUser/{id}")]
+        public async Task<DataResponse<AppUserDto>> GetData(Guid id)
+        {
+            var user = await _UserService.GetUserDto(id);
+            if (user == null)
+                return DataResponse<AppUserDto>.False("Can't find user");
+            return new DataResponse<AppUserDto>()
+            {
+                Success = true,
+                Data = user,
+            };
+        }
+
+        [HttpPost("GetData")]
+        public async Task<DataResponse<PagedList<AppUserDto>>> GetData([FromBody] AppUserSearch search)
+        {
+            return await _UserService.GetData(search);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace N.Repository
 {
-    public interface IRepository<T> where T : Entity
+    public interface IRepository<T> where T : class
     {
         IEnumerable<T> GetAll();
         IQueryable<T> GetQueryable();

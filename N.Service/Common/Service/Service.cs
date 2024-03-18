@@ -7,7 +7,7 @@ using System;
 
 namespace N.Service.Common.Service
 {
-    public class Service<T> : IService<T> where T : Entity
+    public class Service<T> : IService<T> where T : class
     {
         private readonly IRepository<T> _repository;
         public Service(IRepository<T> repository)
@@ -19,7 +19,6 @@ namespace N.Service.Common.Service
         {
             if (guid == null)
             {
-                return null;
             }
 
             return _repository.GetById(guid.Value);

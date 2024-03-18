@@ -2,7 +2,7 @@
 
 namespace N.Model.Entities
 {
-    public class AppUser : IdentityUser<Guid>
+    public class AppUser :  IdentityUser<Guid>
     {
         public string? Name { get; set; }
         public string? Gender { get; set; }

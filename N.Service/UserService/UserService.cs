@@ -3,6 +3,7 @@ using Google.Apis.Drive.v3.Data;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
 using N.Core.Email;
@@ -10,11 +11,15 @@ using N.Core.QRCodeProvider;
 using N.Extensions;
 using N.Model;
 using N.Model.Entities;
+using N.Repository.NDirectoryRepository;
 using N.Service.Common;
+using N.Service.Common.Service;
 using N.Service.Common.TokenService;
 using N.Service.Constant;
 using N.Service.Core.Generator;
 using N.Service.DTO;
+using N.Service.FieldService.Dto;
+using N.Service.UserService.Dto;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,7 +30,7 @@ using static QRCoder.PayloadGenerator;
 
 namespace N.Service.UserService
 {
-    public class UserService : IUserService
+    public class UserService : Service<AppUser>, IUserService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
@@ -33,9 +38,10 @@ namespace N.Service.UserService
         private readonly ITokenService _tokenService;
         public UserService(UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
+            IUserRepository userRepository,
             IDistributedCache cache,
             ITokenService tokenService
-            )
+            ) : base(userRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -52,7 +58,16 @@ namespace N.Service.UserService
             var user = await _userManager.FindByIdAsync(id);
             return user;
         }
-        public async Task<DataResponse> RegisterUser(string email, string name, string gender, string type, string password, string confirmPassword, string baseUri)
+        public async Task<AppUserDto?> GetUserDto(Guid id)
+        {
+            var user = await this.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (user != null)
+            {
+                return AppUserDto.FromAppUser(user);
+            }
+            return null;
+        }
+        public async Task<DataResponse> RegisterUser(string email, string name, string phone, string gender, string type, string password, string confirmPassword, string baseUri)
         {
             if (await _userManager.FindByEmailAsync(email) != null)
             {
@@ -90,10 +105,11 @@ namespace N.Service.UserService
                 Email = email,
                 UserName = email,
                 Name = name,
+                PhoneNumber = phone,
                 Type = type,
                 Gender = gender
             };
-            if (type == AccountTypeConstant.Staff)
+            if (type == AccountTypeConstant.Staff || type == AccountTypeConstant.Manager)
             {
                 user.EmailConfirmed = true;
             }
@@ -209,11 +225,11 @@ namespace N.Service.UserService
                 };
             if (!user.EmailConfirmed)
             {
-                return new DataResponse<AppUserDto>()
-                {
-                    Message = "Cannot sign in without confirmed email",
-                    Success = false,
-                };
+                //return new DataResponse<AppUserDto>()
+                //{
+                //    Message = "Cannot sign in without confirmed email",
+                //    Success = false,
+                //};
             }
 
             var result = await _userManager.CheckPasswordAsync(user, password);
@@ -440,16 +456,9 @@ namespace N.Service.UserService
 
 
 
-            var userDto = new AppUserDto()
-            {
-                Gender = user.Gender,
-                Id = user.Id.ToString(),
-                Email = user.Email,
-                Name = user.Name,
-                Picture = user.Picture,
-                Token = tokenString,
-                RefreshToken = refreshToken,
-            };
+            var userDto = AppUserDto.FromAppUser(user);
+            userDto.Token = tokenString;
+            userDto.RefreshToken = refreshToken;
             return new DataResponse<AppUserDto>()
             {
                 Message = "Login success",
@@ -468,6 +477,49 @@ namespace N.Service.UserService
             return refreshToken;
         }
 
+        public async Task<DataResponse<PagedList<AppUserDto>>> GetData(AppUserSearch search)
+        {
+            try
+            {
+                var query = from q in GetQueryable()
+                            select new AppUserDto()
+                            {
+                                Id = q.Id,
+                                Name = q.Name,
+                                Picture = q.Picture,
+                                Type = q.Type,
+                                Email = q.Email,
+                                Gender = q.Gender,
+                            };
 
+                if (!string.IsNullOrEmpty(search.Type))
+                {
+                    query = query.Where(x => x.Type == search.Type);
+                }
+                if (!string.IsNullOrEmpty(search.Email))
+                {
+                    query = query.Where(x => !string.IsNullOrEmpty(x.Email) && x.Email.ToLower().Contains(search.Email.ToLower()));
+                }
+                if (!string.IsNullOrEmpty(search.Name))
+                {
+                    query = query.Where(x => !string.IsNullOrEmpty(x.Name) && x.Name.ToLower().Contains(search.Name.ToLower()));
+                }
+                if (!string.IsNullOrEmpty(search.Phone))
+                {
+                }
+
+                var result = PagedList<AppUserDto>.Create(query, search);
+                return new DataResponse<PagedList<AppUserDto>>()
+                {
+                    Data = result,
+                    Message = "Success"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return DataResponse<PagedList<AppUserDto>>.False(ex.Message);
+            }
+        }
     }
 }
