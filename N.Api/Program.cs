@@ -25,10 +25,9 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCors(builder =>
 {
-    builder.WithOrigins("http://localhost:4200")
-        .AllowAnyHeader()
-        .WithMethods("GET", "POST")
-        .AllowCredentials();
+    builder.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
 });
 
 app.UseSwagger();

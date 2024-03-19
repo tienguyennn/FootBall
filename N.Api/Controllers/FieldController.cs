@@ -130,6 +130,14 @@ namespace N.Controllers
             return _fieldService.GetData(search);
         }
 
+
+        [HttpGet("GetField/{id}")]
+        public DataResponse<FieldDto> GetField(Guid id)
+        {
+            return _fieldService.GetDto(id);
+        }
+
+
         [HttpPost("GetFieldTimes")]
         public DataResponse<List<FieldTime>> GetFieldTimes(FieldTimeSearch search)
         {

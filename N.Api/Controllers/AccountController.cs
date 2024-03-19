@@ -34,9 +34,8 @@ namespace N.Controllers
             if (ModelState.IsValid)
             {
                 var baseUri = GetUri();
-                var result = await _UserService.RegisterUser(model.Email, model.Name,model.Phone, model.Gender, AccountTypeConstant.EndUser, model.Password, model.ConfirmPassword, baseUri);
+                var result = await _UserService.RegisterUser(model.Email, model.Name,model.Phone, model.Gender, model.Type, model.Password, model.ConfirmPassword, baseUri);
                 return result;
-
             }
 
             return DataResponse.False("Some properties are not valid");
@@ -71,49 +70,49 @@ namespace N.Controllers
             return DataResponse<AppUserDto>.False("Some properties are not valid", ModelStateError);
         }
 
-        [HttpPost("CreateStaff")]
-        public async Task<DataResponse> CreateStaff([FromBody] RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var baseUri = GetUri();
-                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, AccountTypeConstant.Staff, model.Password, model.ConfirmPassword, baseUri);
-                return result;
+        //[HttpPost("CreateStaff")]
+        //public async Task<DataResponse> CreateStaff([FromBody] RegisterViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var baseUri = GetUri();
+        //        var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, AccountTypeConstant.Staff, model.Password, model.ConfirmPassword, baseUri);
+        //        return result;
 
-            }
+        //    }
 
-            return DataResponse.False("Some properties are not valid");
-        }
+        //    return DataResponse.False("Some properties are not valid");
+        //}
 
 
-        [HttpPost("CreateManager")]
-        public async Task<DataResponse> CreateManager([FromBody] RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var baseUri = GetUri();
-                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, AccountTypeConstant.Manager, model.Password, model.ConfirmPassword, baseUri);
-                return result;
+        //[HttpPost("CreateManager")]
+        //public async Task<DataResponse> CreateManager([FromBody] RegisterViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var baseUri = GetUri();
+        //        var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, AccountTypeConstant.Manager, model.Password, model.ConfirmPassword, baseUri);
+        //        return result;
 
-            }
+        //    }
 
-            return DataResponse.False("Some properties are not valid");
-        }
+        //    return DataResponse.False("Some properties are not valid");
+        //}
 
-        [HttpPost("RegisterFieldOwner")]
-        [AllowAnonymous]
-        public async Task<DataResponse> RegisterFieldOwner([FromBody] RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var baseUri = GetUri();
-                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, AccountTypeConstant.FieldOwner, model.Password, model.ConfirmPassword, baseUri);
-                return result;
+        //[HttpPost("RegisterFieldOwner")]
+        //[AllowAnonymous]
+        //public async Task<DataResponse> RegisterFieldOwner([FromBody] RegisterViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var baseUri = GetUri();
+        //        var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, AccountTypeConstant.FieldOwner, model.Password, model.ConfirmPassword, baseUri);
+        //        return result;
 
-            }
+        //    }
 
-            return DataResponse.False("Some properties are not valid");
-        }
+        //    return DataResponse.False("Some properties are not valid");
+        //}
 
         [HttpPost("ChangePassword")]
         public async Task<DataResponse<AppUserDto>> ChangePassword([FromBody] ChangePasswordViewModel model)

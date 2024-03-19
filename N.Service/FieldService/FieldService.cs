@@ -63,6 +63,7 @@ namespace N.Service.FieladService
                 return new DataResponse<PagedList<FieldDto>>()
                 {
                     Data = result,
+                    Success = true,
                     Message = "Success"
                 };
 
@@ -72,6 +73,40 @@ namespace N.Service.FieladService
                 return DataResponse<PagedList<FieldDto>>.False(ex.Message);
             }
 
+        }
+
+        public DataResponse<FieldDto> GetDto(Guid id)
+        {
+            try
+            {
+                var query = (from q in GetQueryable()
+                            .Where(x=>x.Id == id)
+                            select new FieldDto()
+                            {
+                                Address = q.Address,
+                                Description = q.Description,
+                                Id = q.Id,
+                                Name = q.Name,
+                                Picture = q.Picture,
+                                UserId = q.UserId,
+                                Price = q.Price,
+                                StaffId = q.StaffId,
+                                Status = q.Status,
+                            }).FirstOrDefault();
+
+
+                return new DataResponse<FieldDto>()
+                {
+                    Data = query,
+                    Success = true,
+                    Message = "Success"
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return DataResponse<FieldDto>.False(ex.Message);
+            }
         }
 
         public DataResponse<List<Fee>> GetFees(Guid id)
