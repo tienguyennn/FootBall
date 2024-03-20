@@ -9,5 +9,6 @@ namespace N.Service.FieldService.Dto
 {
     public class FieldDto : Field
     {
+        public List<FieldTime>? FieldTimes { get; set; }
     }
 }

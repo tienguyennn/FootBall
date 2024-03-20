@@ -4,6 +4,7 @@ using N.Api.ViewModels;
 using N.Model.Entities;
 using N.Service.BookingService;
 using N.Service.BookingService.Dto;
+using N.Service.Common;
 using N.Service.DTO;
 using N.Service.FieladService;
 using N.Service.FieldService.Dto;
@@ -31,6 +32,7 @@ namespace N.Controllers
             this._mapper = mapper;
             _logger = logger;
         }
+
         [HttpPost("Create")]
         public async Task<DataResponse<Booking>> Create([FromBody] BookingCreateVM model)
         {
@@ -45,14 +47,22 @@ namespace N.Controllers
                         FieldId = model.FieldId,
                         Status = model.Status,
                         UserId = UserId,
+                        DateTime = DateTime.Now,
                         Description = model.Description,
                     };
+
+                    var check = _bookingService.CheckBooked(model.FieldId, model.Start, model.End, null);
+                    if (check)
+                    {
+                        return DataResponse<Booking>.False("Field already booked");
+                    }
 
                     var field = _fieldService.GetById(entity.FieldId);
                     if (field != null)
                     {
                         entity.Price = field.Price;
                     }
+
                     await _bookingService.Create(entity);
                     return new DataResponse<Booking>() { Data = entity, Success = true };
                 }
@@ -64,10 +74,17 @@ namespace N.Controllers
             return DataResponse<Booking>.False("Some properties are not valid", ModelState.Values.SelectMany(v => v.Errors.Select(x => x.ErrorMessage)));
         }
 
-        [HttpPost("History")]
-        public DataResponse<List<BookingDto>> History(BookingSearch search)
+
+        [HttpGet("GetBooking/{id}")]
+        public DataResponse<BookingDto> GetBooking(Guid id)
         {
-            return _bookingService.History(search, UserId);
+            return _bookingService.GetDto(id);
+        }
+
+        [HttpPost("History")]
+        public DataResponse<PagedList<BookingDto>> History(BookingSearch search)
+        {
+            return _bookingService.History(search);
         }
 
     }

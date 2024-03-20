@@ -7,8 +7,8 @@ namespace N.Service.FeeService
     public class FeeService : Service<Fee>, IFeeService
     {
         public FeeService(
-            IFeeRepository feeRepository
-            ) : base(feeRepository)
+            IFeeRepository FeeRepository
+            ) : base(FeeRepository)
         {
         }
 

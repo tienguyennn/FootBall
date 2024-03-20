@@ -94,6 +94,13 @@ namespace N.Service.FieladService
                                 Status = q.Status,
                             }).FirstOrDefault();
 
+                if(query != null)
+                {
+                    var fieldTimes = GetFieldTimes(new FieldTimeSearch() { FieldId = query.Id });
+                    query.FieldTimes = fieldTimes.Data;
+                }
+
+
 
                 return new DataResponse<FieldDto>()
                 {

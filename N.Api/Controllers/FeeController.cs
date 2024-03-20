@@ -10,18 +10,17 @@ namespace N.Controllers
     [Route("api/[controller]")]
     public class FeeController : NController
     {
-        private readonly IFeeService _feeService;
+        private readonly IFeeService _FeeService;
         private readonly IMapper _mapper;
         private readonly ILogger<FeeController> _logger;
 
-
         public FeeController(
-            IFeeService feeService,
+            IFeeService FeeService,
             IMapper mapper,
             ILogger<FeeController> logger
             )
         {
-            this._feeService = feeService;
+            this._FeeService = FeeService;
             this._mapper = mapper;
             _logger = logger;
         }
@@ -40,7 +39,7 @@ namespace N.Controllers
                         Name = model.Name,
                         Description = model.Description,
                     };
-                    await _feeService.Create(entity);
+                    await _FeeService.Create(entity);
                     return new DataResponse<Fee>() { Data = entity, Success = true };
                 }
                 catch (Exception ex)
