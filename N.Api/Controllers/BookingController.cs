@@ -166,11 +166,35 @@ namespace N.Controllers
             if (booking == null)
                 return DataResponse<Booking>.False("Booking not found");
             booking.Status = BookingStatusConstant.Paid;
+            booking.Paid = true;
             await _bookingService.Update(booking);
             return DataResponse<Booking>.True(booking);
         }
 
 
+
+
+        [HttpGet("Deposit")]
+        public async Task<DataResponse<string>> Deposit(Guid id, string returnUrl)
+        {
+            var url = await _paymentService.CreateDepositUrl(id, returnUrl, "127.0.0.1");
+            if (string.IsNullOrEmpty(url))
+            {
+                return DataResponse<string>.False("Error");
+            }
+            return DataResponse<string>.True(url);
+        }
+
+        [HttpGet("DepositSuccess/{id}")]
+        public async Task<DataResponse<Booking>> DepositSuccess(Guid id)
+        {
+            var booking = _bookingService.GetById(id);
+            if (booking == null)
+                return DataResponse<Booking>.False("Booking not found");
+            booking.Deposited = true;
+            await _bookingService.Update(booking);
+            return DataResponse<Booking>.True(booking);
+        }
 
     }
 }

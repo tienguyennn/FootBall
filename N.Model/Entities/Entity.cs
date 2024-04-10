@@ -17,5 +17,7 @@ namespace N.Model.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
+
+        public DateTime CreatedDate { get; set; }
     }
 }

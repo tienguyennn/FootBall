@@ -126,7 +126,7 @@ namespace N.Controllers
                 if (fieldOwner == null)
                     return DataResponse.False("Field owner not found");
 
-                if(fieldOwner.Type != AccountTypeConstant.FieldOwner)
+                if (fieldOwner.Type != AccountTypeConstant.FieldOwner)
                     return DataResponse.False("User is not a field owner");
 
                 var staff = _UserService.GetById(model.StaffId);
@@ -237,14 +237,24 @@ namespace N.Controllers
         [Authorize]
         public async Task<DataResponse<AppUserDto>> UpdateProfile([FromBody] AppUserEditViewModel model)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = "";
+            if (model.Id.HasValue)
+            {
+                userId = model.Id.ToString();
+            }
+            else
+            {
+                userId = UserId.ToString();
+            }
             if (ModelState.IsValid)
             {
                 var user = await _UserService.GetUser(userId);
                 if (user != null)
                 {
-                    user.Name = model.FamilyName + " " + model.GivenName;
+                    user.Name = model.Name;
                     user.Gender = model.Gender;
+                    user.PhoneNumber = model.Phone;
+                    user.Type = model.Type;
                     var result = await _UserService.UpdateUser(user);
                     return result;
                 }

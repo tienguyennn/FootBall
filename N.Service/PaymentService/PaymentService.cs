@@ -26,13 +26,12 @@ namespace N.Service.PaymentService
             {
 
                 var amount = booking.Price;
-                if (booking.Services != null && booking.Services.Any())
+
+                if (booking.Paid)
                 {
-                    foreach (var item in booking.Services)
-                    {
-                        amount += item.Price ?? 0;
-                    }
+                    amount = amount * 0.9f;
                 }
+
                 if (!amount.HasValue || amount < 10000)
                 {
                     amount = 10000;
@@ -50,6 +49,42 @@ namespace N.Service.PaymentService
                 pay.AddRequestData("vnp_IpAddr", ip);
                 pay.AddRequestData("vnp_Locale", AppSettings.VnPay.Locale);
                 pay.AddRequestData("vnp_OrderInfo", $"Thanh toan don hang");
+                pay.AddRequestData("vnp_OrderType", "other");
+                pay.AddRequestData("vnp_ReturnUrl", returlUrl);
+                pay.AddRequestData("vnp_TxnRef", tick);
+
+                var paymentUrl =
+                    pay.CreateRequestUrl(AppSettings.VnPay.BaseUrl, AppSettings.VnPay.HashSecret);
+
+                return paymentUrl;
+            }
+            return null;
+        }
+
+        public async Task<string> CreateDepositUrl(Guid bookingId, string returlUrl, string ip)
+        {
+            var booking = (await _bookingService.GetDto(bookingId)).Data;
+            if (booking != null)
+            {
+
+                var amount = booking.Price / 10;
+                if (!amount.HasValue || amount < 10000)
+                {
+                    amount = 10000;
+                }
+
+                var timeNow = DateTime.Now;
+                var tick = timeNow.Ticks.ToString();
+                var pay = new VnPayLibrary();
+                pay.AddRequestData("vnp_Version", AppSettings.VnPay.Version);
+                pay.AddRequestData("vnp_Command", AppSettings.VnPay.Command);
+                pay.AddRequestData("vnp_TmnCode", AppSettings.VnPay.TmnCode);
+                pay.AddRequestData("vnp_Amount", (amount * 100).ToString());
+                pay.AddRequestData("vnp_CreateDate", timeNow.ToString("yyyyMMddHHmmss"));
+                pay.AddRequestData("vnp_CurrCode", AppSettings.VnPay.CurrCode);
+                pay.AddRequestData("vnp_IpAddr", ip);
+                pay.AddRequestData("vnp_Locale", AppSettings.VnPay.Locale);
+                pay.AddRequestData("vnp_OrderInfo", $"Dat coc don hang");
                 pay.AddRequestData("vnp_OrderType", "other");
                 pay.AddRequestData("vnp_ReturnUrl", returlUrl);
                 pay.AddRequestData("vnp_TxnRef", tick);

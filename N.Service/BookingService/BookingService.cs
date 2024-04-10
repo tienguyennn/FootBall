@@ -1,3 +1,4 @@
+using Google.Apis.Drive.v3.Data;
 using Microsoft.EntityFrameworkCore;
 using N.Model.Entities;
 using N.Repository.BookingRepository;
@@ -48,7 +49,7 @@ namespace N.Service.BookingService
 
         public async Task<DataResponse<BookingDto>> GetDto(Guid id)
         {
-            var query = await (from q in GetQueryable().Where(x=>x.Id == id)
+            var query = await (from q in GetQueryable().Where(x => x.Id == id)
                                join user in _userRepository.GetQueryable()
                                on q.UserId equals user.Id
                                join field in _fieldRepository.GetQueryable()
@@ -63,6 +64,9 @@ namespace N.Service.BookingService
                                    DateTime = q.DateTime,
                                    End = q.End,
                                    FieldId = q.FieldId,
+                                   Paid = q.Paid,
+                                   Deposited = q.Deposited,
+                                   CreatedDate = q.CreatedDate,
                                    Start = q.Start,
                                    User = AppUserDto.FromAppUser(user),
                                    Field = field,
@@ -85,6 +89,15 @@ namespace N.Service.BookingService
                     payment.FieldService = (await _fieldServiceFeeService.GetDto(payment.FieldServiceFeeId ?? Guid.Empty)).Data;
                 }
                 query.Services = payments;
+
+                if (query.Services != null && query.Services.Any())
+                {
+                    query.Price = query.Price ?? 0;
+                    foreach (var item in query.Services)
+                    {
+                        query.Price += item.Price ?? 0;
+                    }
+                }
             }
 
             return new DataResponse<BookingDto>()
@@ -101,8 +114,6 @@ namespace N.Service.BookingService
                         on q.UserId equals user.Id
                         join field in _fieldRepository.GetQueryable()
                         on q.FieldId equals field.Id
-
-
                         select new BookingDto()
                         {
                             Description = q.Description,
@@ -114,6 +125,9 @@ namespace N.Service.BookingService
                             End = q.End,
                             FieldId = q.FieldId,
                             Start = q.Start,
+                            Paid = q.Paid,
+                            Deposited = q.Deposited,
+                            CreatedDate= q.CreatedDate,
                             User = AppUserDto.FromAppUser(user),
                             Field = field,
                         };
@@ -134,7 +148,15 @@ namespace N.Service.BookingService
             {
                 query = query.Where(x => x.End <= search.End);
             }
-
+            if (search.Deposited.HasValue)
+            {
+                query = query.Where(x => x.Deposited == search.Deposited);
+            }
+            if (search.Paid.HasValue)
+            {
+                query = query.Where(x => x.Paid == search.Paid);
+            }
+            query = query.OrderByDescending(x => x.CreatedDate);
             var result = PagedList<BookingDto>.Create(query, search);
             foreach (var item in result.Items)
             {
@@ -153,6 +175,14 @@ namespace N.Service.BookingService
                     payment.FieldService = (await _fieldServiceFeeService.GetDto(payment.FieldServiceFeeId ?? Guid.Empty)).Data;
                 }
                 item.Services = payments;
+                if (item.Services != null && item.Services.Any())
+                {
+                    item.Price = item.Price ?? 0;
+                    foreach (var service in item.Services)
+                    {
+                        item.Price += service.Price ?? 0;
+                    }
+                }
             }
             return new DataResponse<PagedList<BookingDto>>()
             {

@@ -25,6 +25,11 @@ namespace N.Service.Common.Service
         }
         public virtual async Task Create(T entity)
         {
+            var iEntity = entity as Entity;
+            if (iEntity != null)
+            {
+                iEntity.CreatedDate = DateTime.Now;
+            }
             _repository.Add(entity);
             await _repository.Save();
         }

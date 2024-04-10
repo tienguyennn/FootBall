@@ -24,8 +24,10 @@ namespace N.Service.FieldServiceFeeService
                             select new FieldServiceFeeDto()
                             {
                                 Id = q.Id,
+                                CreatedDate = q.CreatedDate,
                             };
 
+                query = query.OrderByDescending(x => x.CreatedDate);
                 var result = await PagedList<FieldServiceFeeDto>.CreateAsync(query, search);
                 return new DataResponse<PagedList<FieldServiceFeeDto>>()
                 {

@@ -8,5 +8,7 @@ namespace N.Service.BookingService.Dto
         public Guid? FieldId { get; set; }
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
+        public bool? Deposited { get; set; }
+        public bool? Paid { get; set; }
     }
 }

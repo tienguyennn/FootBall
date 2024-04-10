@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using N.Model;
 
@@ -11,9 +12,11 @@ using N.Model;
 namespace N.Model.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240409033509_addPaid")]
+    partial class addPaid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,15 +241,15 @@ namespace N.Model.Migrations
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "144c1320-2de3-482f-85b7-dac55c7889aa",
+                            ConcurrencyStamp = "5d47801d-0f94-41a2-ad44-dc606d71c9ac",
                             Email = "admin",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMUG5CkUeoDESWGN4RdWc8o+rbd+KEcJsUvILxEmpF8gYwRsIqX61YpJ1PmuuwDU+g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHa5t/Kw1ujS2WUIjspdAduUqv16cTdeZpoaiY4lfqh/LsjVYfwm1pBWIycbCo6kGQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d754e1ea-2ef6-4f1e-a300-23a106f4c9bc",
+                            SecurityStamp = "b72e3e3e-f005-4214-a390-0a9ce117c502",
                             TwoFactorEnabled = false,
                             Type = "Admin",
                             UserName = "admin"
@@ -323,9 +326,6 @@ namespace N.Model.Migrations
 
                     b.Property<float?>("Price")
                         .HasColumnType("real");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("StaffId")
                         .HasColumnType("uniqueidentifier");

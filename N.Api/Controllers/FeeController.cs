@@ -40,6 +40,7 @@ namespace N.Controllers
                     {
                         Name = model.Name,
                         Icon = model.Icon,
+                        Price = model.Price,
                         Description = model.Description,
                     };
                     await _ServiceFeeService.Create(entity);
@@ -65,6 +66,7 @@ namespace N.Controllers
                     {
                         entity.Name = model.Name;
                         entity.Icon = model.Icon;
+                        entity.Price = model.Price;
                         entity.Description = model.Description;
                     }
 

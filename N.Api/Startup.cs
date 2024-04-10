@@ -138,6 +138,16 @@ namespace N
             //         options.ClientSecret = AppSettings.ExternalAuth.GoogleAuth.ClientSecret;
             //         options.CallbackPath = "/google";
             //     });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin() // Allow any origin
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
         }
 
         private static void AddDependencyInjection(this IServiceCollection services)

@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using N.Api.ViewModels;
 using N.Model.Entities;
@@ -9,6 +9,7 @@ using N.Service.Dto;
 using N.Service.FieladService;
 using N.Service.FieldService.Dto;
 using N.Service.FieldServiceFeeService;
+using N.Service.ServiceFeeService;
 using N.Service.UserService;
 //using PagedList;
 
@@ -20,6 +21,7 @@ namespace N.Controllers
         private readonly IFieldService _fieldService;
         private readonly IUserService _userService;
         private readonly IFieldServiceFeeService _fieldServiceFeeService;
+        private readonly IServiceFeeService _serviceFeeService;
         private readonly IMapper _mapper;
         private readonly ILogger<FieldController> _logger;
 
@@ -28,6 +30,7 @@ namespace N.Controllers
             IFieldService fieldService,
             IUserService userService,
             IFieldServiceFeeService fieldServiceFeeService,
+            IServiceFeeService serviceFeeService,
             IMapper mapper,
             ILogger<FieldController> logger
             )
@@ -35,6 +38,7 @@ namespace N.Controllers
             this._fieldService = fieldService;
             this._userService = userService;
             this._fieldServiceFeeService = fieldServiceFeeService;
+            this._serviceFeeService = serviceFeeService;
             this._mapper = mapper;
             _logger = logger;
         }
@@ -75,10 +79,12 @@ namespace N.Controllers
                     {
                         foreach (var service in model.Services)
                         {
+                            var serviceFee = _serviceFeeService.GetById(service.ServiceFeeId);
+
                             var fieldService = new FieldServiceFee()
                             {
                                 FieldId = entity.Id,
-                                Price = service.Price,
+                                Price = service.Price ?? serviceFee?.Price,
                                 ServiceFeeId = service.ServiceFeeId,
                             };
                             await _fieldServiceFeeService.Create(fieldService);
@@ -146,6 +152,7 @@ namespace N.Controllers
                     if (entity == null)
                         return DataResponse<Field>.False("Field not found");
                     entity.Status = model.Status;
+                    entity.Reason = model.Reason;
                     await _fieldService.Update(entity);
                     return new DataResponse<Field>() { Data = entity, Success = true };
                 }
@@ -164,9 +171,8 @@ namespace N.Controllers
             return _fieldService.GetData(search);
         }
 
-
-        [HttpGet("GetField/{id}")]
-        public DataResponse<FieldDto> GetField(Guid id)
+        [HttpGet("Suggestion/{id}")]
+        public DataResponse<FieldDto> Suggestion(Guid id)
         {
             return _fieldService.GetDto(id);
         }

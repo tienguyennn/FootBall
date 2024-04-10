@@ -43,6 +43,7 @@ namespace N.Service.InviteService
                                 TeamId = q.TeamId,
                                 Team = team,
                                 InviteTeam = inviteTeam,
+                                CreatedDate = q.CreatedDate,
                             };
 
 
@@ -64,6 +65,7 @@ namespace N.Service.InviteService
                     query = query.Where(x => x.Team != null && x.Team.UserId == search.UserId);
 
                 }
+                query = query.OrderByDescending(x => x.CreatedDate);
 
                 var result = PagedList<InviteDto>.Create(query, search);
                 return new DataResponse<PagedList<InviteDto>>()

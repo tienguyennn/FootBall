@@ -6,5 +6,6 @@ namespace N.Api.ViewModels
     {
         public Guid? Id { get; set; }
         public string? Status { get; set; }
+        public string? Reason { get; set; }
     }
 }

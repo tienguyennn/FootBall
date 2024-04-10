@@ -49,6 +49,8 @@ namespace N.Service.FieladService
                                 StaffId = q.StaffId,
                                 Status = q.Status,
                                 FieldAreaId = q.FieldAreaId,
+                                CreatedDate = q.CreatedDate,
+                                Reason = q.Reason,
                             };
 
                 if (search.UserId.HasValue)
@@ -68,6 +70,8 @@ namespace N.Service.FieladService
                 {
                     query = query.Where(x => x.Status == search.Status);
                 }
+
+                query = query.OrderByDescending(x => x.CreatedDate);
 
                 var result = PagedList<FieldDto>.Create(query, search);
                 foreach (var item in result.Items)
@@ -123,6 +127,7 @@ namespace N.Service.FieladService
                                  StaffId = q.StaffId,
                                  Status = q.Status,
                                  FieldAreaId = q.FieldAreaId,
+                                 Reason = q.Reason,
                              }).FirstOrDefault();
 
                 if (query != null)

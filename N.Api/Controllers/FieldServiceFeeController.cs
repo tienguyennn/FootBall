@@ -37,7 +37,9 @@ namespace N.Controllers
                 {
                     var entity = new FieldServiceFee()
                     {
-
+                        Price = model.Price,
+                        FieldId = model.FieldId,
+                        ServiceFeeId = model.ServiceFeeId,
                     };
 
                     await _fieldServiceFeeService.Create(entity);

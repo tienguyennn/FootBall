@@ -9,5 +9,6 @@ namespace N.Service.PaymentService
     {
         Task<string> CreatePaymentUrl(Guid bookingId, string returnUrl, string ip);
         //PaymentResponseModel PaymentExecute(IQueryCollection collections);
+        Task<string> CreateDepositUrl(Guid bookingId, string returlUrl, string ip);
     }
 }

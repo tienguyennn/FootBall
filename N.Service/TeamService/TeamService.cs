@@ -41,6 +41,7 @@ namespace N.Service.TeamService
                                 Phone = q.Phone,
                                 Age = q.Age,
                                 Level = q.Level,
+                                CreatedDate = q.CreatedDate,
                             };
 
                 if (userId.HasValue)
@@ -52,6 +53,7 @@ namespace N.Service.TeamService
                 {
 
                 }
+                query = query.OrderByDescending(x => x.CreatedDate);
 
                 var result = PagedList<TeamDto>.Create(query, search);
                 return new DataResponse<PagedList<TeamDto>>()

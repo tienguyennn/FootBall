@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using N.Model;
 
@@ -11,9 +12,11 @@ using N.Model;
 namespace N.Model.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240407091738_addCreatedDate")]
+    partial class addCreatedDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,15 +241,15 @@ namespace N.Model.Migrations
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "144c1320-2de3-482f-85b7-dac55c7889aa",
+                            ConcurrencyStamp = "69de1b4c-245d-4904-a247-0f60854817c7",
                             Email = "admin",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMUG5CkUeoDESWGN4RdWc8o+rbd+KEcJsUvILxEmpF8gYwRsIqX61YpJ1PmuuwDU+g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGQ7sP73wM5SVsq2ll8d7zQHvl3FVfcum2QmQfmmPREEtkv3zbJSIU6tR5G9l50SqQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d754e1ea-2ef6-4f1e-a300-23a106f4c9bc",
+                            SecurityStamp = "aced9cbe-e55a-4b05-b09e-3716c0c837df",
                             TwoFactorEnabled = false,
                             Type = "Admin",
                             UserName = "admin"
@@ -265,9 +268,6 @@ namespace N.Model.Migrations
                     b.Property<DateTime?>("DateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Deposited")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -276,9 +276,6 @@ namespace N.Model.Migrations
 
                     b.Property<Guid?>("FieldId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Paid")
-                        .HasColumnType("bit");
 
                     b.Property<float?>("Price")
                         .HasColumnType("real");
@@ -323,9 +320,6 @@ namespace N.Model.Migrations
 
                     b.Property<float?>("Price")
                         .HasColumnType("real");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("StaffId")
                         .HasColumnType("uniqueidentifier");
