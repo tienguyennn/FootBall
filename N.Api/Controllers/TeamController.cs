@@ -51,6 +51,7 @@ namespace N.Controllers
                         Name = model.Name,
                         Age = model.Age,
                         UserId = UserId,
+                        Status = model.Status,
                         Phone = model.Phone,
                         Level = model.Level,
                     };
@@ -81,6 +82,7 @@ namespace N.Controllers
                     entity.Level = model.Level;
                     entity.Name = model.Name;
                     entity.Age = model.Age;
+                    entity.Status = model.Status;
                     entity.Description = model.Description;
                     entity.Phone = model.Phone;
 

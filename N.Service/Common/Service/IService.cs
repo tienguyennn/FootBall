@@ -11,6 +11,7 @@ namespace N.Service.Common.Service
         Task Update(T entity);
         Task Update(IEnumerable<T> entities);
         Task Delete(T entity);
+        Task Delete(IEnumerable<T> entities);
         IQueryable<T> GetQueryable();
     }
 }

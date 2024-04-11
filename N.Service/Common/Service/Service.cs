@@ -62,6 +62,12 @@ namespace N.Service.Common.Service
             _repository.Delete(entity);
             await _repository.Save();
         }
+
+        public async Task Delete(IEnumerable<T> entities)
+        {
+            _repository.DeleteRange(entities);
+            await _repository.Save();
+        }
         public IQueryable<T> GetQueryable()
         {
             return _repository.GetQueryable();

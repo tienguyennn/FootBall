@@ -31,7 +31,7 @@ namespace N.Service.TeamService
         {
             try
             {
-                var query = from q in GetQueryable()
+                var query = from q in GetQueryable().Where(x => x.Status == 1)
                             select new TeamDto()
                             {
                                 Id = q.Id,
@@ -54,7 +54,6 @@ namespace N.Service.TeamService
 
                 }
                 query = query.OrderByDescending(x => x.CreatedDate);
-
                 var result = PagedList<TeamDto>.Create(query, search);
                 return new DataResponse<PagedList<TeamDto>>()
                 {

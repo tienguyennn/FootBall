@@ -171,11 +171,18 @@ namespace N.Controllers
             return _fieldService.GetData(search);
         }
 
-        [HttpGet("Suggestion/{id}")]
-        public DataResponse<FieldDto> Suggestion(Guid id)
+        [HttpGet("GetField/{id}")]
+        public DataResponse<FieldDto> GetField(Guid id)
         {
             return _fieldService.GetDto(id);
         }
+
+
+        //[HttpGet("Suggestion/{id}")]
+        //public DataResponse<List<FieldDto>> Suggestion(Guid id)
+        //{
+        //    return _fieldService.GetData(new FieldSearch() { PageSize = -1});
+        //}
 
 
         [HttpPost("GetFieldTimes")]

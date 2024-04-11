@@ -111,6 +111,72 @@ namespace N.Controllers
         }
 
 
+        [HttpPost("Edit")]
+        public async Task<DataResponse<Booking>> Edit([FromBody] BookingEditVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var entity = new Booking()
+                    {
+                        Start = model.Start,
+                        End = model.End,
+                        FieldId = model.FieldId,
+                        Status = BookingStatusConstant.Wait,
+                        UserId = UserId,
+                        DateTime = DateTime.Now,
+                        Description = model.Description,
+                    };
+
+                    var check = _bookingService.CheckBooked(model.FieldId, model.Start, model.End, entity.Id);
+                    if (check)
+                    {
+                        return DataResponse<Booking>.False("Field already booked");
+                    }
+
+
+                    var field = _fieldService.GetById(entity.FieldId);
+                    if (field != null)
+                    {
+                        entity.Price = field.Price;
+                    }
+
+                    await _bookingService.Update(entity);
+                    var services = _serviceFeePaymentService.GetQueryable().Where(x => x.BookingId == entity.Id).ToList();
+                    await _serviceFeePaymentService.Delete(services);
+
+                    if (model.Services != null)
+                    {
+                        foreach (var item in model.Services)
+                        {
+                            var service = _fieldServiceFeeService.GetById(item);
+                            if (service != null)
+                            {
+                                var servicePay = new ServiceFeePayment()
+                                {
+                                    BookingId = entity.Id,
+                                    Price = service.Price,
+                                    FieldServiceFeeId = service.Id,
+                                    DateTime = DateTime.Now,
+                                };
+                                await _serviceFeePaymentService.Create(servicePay);
+                            }
+
+                        }
+                    }
+
+                    return new DataResponse<Booking>() { Data = entity, Success = true };
+                }
+                catch (Exception ex)
+                {
+                    DataResponse<Booking>.False("Error", new string[] { ex.Message });
+                }
+            }
+            return DataResponse<Booking>.False("Some properties are not valid", ModelState.Values.SelectMany(v => v.Errors.Select(x => x.ErrorMessage)));
+        }
+
+
         [HttpPost("UpdateStatus")]
         public async Task<DataResponse<Booking>> UpdateStatus([FromBody] UpdateStatusVM model)
         {

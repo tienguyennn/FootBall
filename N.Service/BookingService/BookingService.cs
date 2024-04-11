@@ -43,7 +43,7 @@ namespace N.Service.BookingService
         {
 
             var booked = GetQueryable().Where(x => x.Start >= start && x.End <= end
-                             && x.FieldId == fieldId).Any();
+                             && x.FieldId == fieldId && x.Id != id).Any();
             return booked;
         }
 
@@ -127,7 +127,7 @@ namespace N.Service.BookingService
                             Start = q.Start,
                             Paid = q.Paid,
                             Deposited = q.Deposited,
-                            CreatedDate= q.CreatedDate,
+                            CreatedDate = q.CreatedDate,
                             User = AppUserDto.FromAppUser(user),
                             Field = field,
                         };
