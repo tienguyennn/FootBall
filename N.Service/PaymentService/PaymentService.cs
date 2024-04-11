@@ -27,9 +27,9 @@ namespace N.Service.PaymentService
 
                 var amount = booking.Price;
 
-                if (booking.Paid)
+                if (booking.DepositValue.HasValue)
                 {
-                    amount = amount * 0.9f;
+                    amount = amount - booking.DepositValue;
                 }
 
                 if (!amount.HasValue || amount < 10000)
@@ -92,9 +92,12 @@ namespace N.Service.PaymentService
                 var paymentUrl =
                     pay.CreateRequestUrl(AppSettings.VnPay.BaseUrl, AppSettings.VnPay.HashSecret);
 
+                booking.DepositValue = amount;
+                await _bookingService.Update(booking);
+
                 return paymentUrl;
             }
-            return null;
+            return string.Empty;
         }
     }
 }
