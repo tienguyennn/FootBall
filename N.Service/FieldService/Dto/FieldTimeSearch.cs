@@ -13,6 +13,9 @@ namespace N.Service.FieldService.Dto
         public DateTime? Start { get; set; }
         public DateTime? End { get; set; }
         public bool Booked { get; set; }
+        public int? Ngay { get; set; }
+        public int? Thang { get; set; }
+        public int? Nam { get; set; }
 
     }
 }

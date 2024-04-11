@@ -13,6 +13,6 @@ namespace N.Service.FieladService
         DataResponse<PagedList<FieldDto>> GetData(FieldSearch search);
         DataResponse<List<FieldTime>> GetFieldTimes(FieldTimeSearch search);
         //DataResponse<List<ServiceFee>> GetServiceFees(Guid id);
-        DataResponse<FieldDto> GetDto(Guid id);
+        DataResponse<FieldDto> GetDto(Guid id, int? ngay, int? thang, int? nam);
     }
 }

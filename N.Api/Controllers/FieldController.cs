@@ -171,10 +171,10 @@ namespace N.Controllers
             return _fieldService.GetData(search);
         }
 
-        [HttpGet("GetField/{id}")]
-        public DataResponse<FieldDto> GetField(Guid id)
+        [HttpGet("GetField")]
+        public DataResponse<FieldDto> GetField(Guid id, int? ngay, int? thang, int? nam)
         {
-            return _fieldService.GetDto(id);
+            return _fieldService.GetDto(id, ngay, thang, nam);
         }
 
 

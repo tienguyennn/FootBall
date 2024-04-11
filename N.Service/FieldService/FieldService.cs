@@ -106,7 +106,7 @@ namespace N.Service.FieladService
 
         }
 
-        public DataResponse<FieldDto> GetDto(Guid id)
+        public DataResponse<FieldDto> GetDto(Guid id, int? ngay, int? thang, int? nam)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace N.Service.FieladService
 
                 if (query != null)
                 {
-                    var fieldTimes = GetFieldTimes(new FieldTimeSearch() { FieldId = query.Id });
+                    var fieldTimes = GetFieldTimes(new FieldTimeSearch() { FieldId = query.Id, Ngay = ngay, Thang = thang, Nam = nam });
                     query.FieldTimes = fieldTimes.Data;
 
                     query.Services = _fieldServiceFeeRepository.GetQueryable().Where(x => x.FieldId == query.Id).Select(x => new FieldServiceFeeDto()
@@ -185,8 +185,15 @@ namespace N.Service.FieladService
                 var start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 5, 0, 0);
                 var end = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 0, 0);
 
+
                 if (search != null)
                 {
+                    if (search.Ngay.HasValue && search.Thang.HasValue && search.Nam.HasValue)
+                    {
+                        start = new DateTime(search.Nam.Value, search.Thang.Value, search.Ngay.Value, 5, 0, 0);
+                        end = new DateTime(search.Nam.Value, search.Thang.Value, search.Ngay.Value, 23, 0, 0);
+                    }
+
                     if (search.Start.HasValue)
                     {
                         while (start > search.Start)
@@ -198,7 +205,7 @@ namespace N.Service.FieladService
                     {
                         while (end < search.End)
                         {
-                            start = start.AddHours(1.5);
+                            end = end.AddHours(1.5);
                         }
                     }
                 }
