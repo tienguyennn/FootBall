@@ -6,6 +6,7 @@ using N.Service.Common;
 using N.Service.Dto;
 using N.Repository.BookingRepository;
 using N.Repository.NDirectoryRepository;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace N.Service.TeamService
 {
@@ -41,6 +42,7 @@ namespace N.Service.TeamService
                                 Phone = q.Phone,
                                 Age = q.Age,
                                 Level = q.Level,
+                                FieldId = q.FieldId,
                                 CreatedDate = q.CreatedDate,
                             };
 
@@ -55,6 +57,14 @@ namespace N.Service.TeamService
                 }
                 query = query.OrderByDescending(x => x.CreatedDate);
                 var result = PagedList<TeamDto>.Create(query, search);
+                foreach (var item in result.Items)
+                {
+                    if (item.FieldId.HasValue)
+                    {
+                        item.Field = _fieldRepository.GetById(item.FieldId.Value);
+                    }
+
+                }
                 return new DataResponse<PagedList<TeamDto>>()
                 {
                     Data = result,
@@ -81,13 +91,21 @@ namespace N.Service.TeamService
                             Name = q.Name,
                             Phone = q.Phone,
                             Age = q.Age,
+                            FieldId = q.FieldId,
                             Level = q.Level,
                         };
-
+            var data = query.FirstOrDefault();
+            if (data != null)
+            {
+                if (data.FieldId.HasValue)
+                {
+                    data.Field = _fieldRepository.GetById(data.FieldId.Value);
+                }
+            }
             return new DataResponse<TeamDto>()
             {
                 Success = true,
-                Data = query.FirstOrDefault(),
+                Data = data
             };
         }
     }

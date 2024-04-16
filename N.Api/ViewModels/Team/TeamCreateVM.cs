@@ -9,6 +9,7 @@ namespace N.Api.ViewModels
         public string? Age { get; set; }
         public int Status { get; set; }
         public string? Phone { get; set; }
+        public Guid? FieldId { get; set; }
         public string? Description { get; set; }
     }
 }

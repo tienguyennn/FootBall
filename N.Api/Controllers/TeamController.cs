@@ -8,6 +8,7 @@ using N.Service.Common;
 using N.Service.Dto;
 using N.Service.BookingService;
 using N.Service.InviteService.Dto;
+using BitMiracle.LibTiff.Classic;
 
 namespace N.Controllers
 {
@@ -53,6 +54,7 @@ namespace N.Controllers
                         UserId = UserId,
                         Status = model.Status,
                         Phone = model.Phone,
+                        FieldId = model.FieldId,
                         Level = model.Level,
                     };
 
@@ -85,7 +87,7 @@ namespace N.Controllers
                     entity.Status = model.Status;
                     entity.Description = model.Description;
                     entity.Phone = model.Phone;
-
+                    entity.FieldId = model.FieldId;
                     await _teamService.Update(entity);
                     return new DataResponse<Team>() { Data = entity, Success = true };
                 }
