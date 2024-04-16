@@ -8,5 +8,6 @@ namespace N.Model.Entities
         public string? Description { get; set; }
         public string? Icon { get; set; }
         public float? Price { get; set; }
+        public Guid? UserId { get; set; }
     }
 }

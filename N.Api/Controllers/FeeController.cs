@@ -42,6 +42,7 @@ namespace N.Controllers
                         Icon = model.Icon,
                         Price = model.Price,
                         Description = model.Description,
+                        UserId = UserId,
                     };
                     await _ServiceFeeService.Create(entity);
                     return new DataResponse<ServiceFee>() { Data = entity, Success = true };
@@ -90,7 +91,7 @@ namespace N.Controllers
         [HttpGet("GetAll")]
         public async Task<DataResponse<List<ServiceFee>>> GetAll()
         {
-            var data = await _ServiceFeeService.GetQueryable().ToListAsync();
+            var data = await _ServiceFeeService.GetQueryable().Where(x=>x.UserId == UserId).ToListAsync();
 
             return new DataResponse<List<ServiceFee>>
             {

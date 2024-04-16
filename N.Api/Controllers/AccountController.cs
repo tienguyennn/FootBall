@@ -254,7 +254,10 @@ namespace N.Controllers
                     user.Name = model.Name;
                     user.Gender = model.Gender;
                     user.PhoneNumber = model.Phone;
-                    user.Type = model.Type;
+                    if (!string.IsNullOrEmpty(model.Type))
+                    {
+                        user.Type = model.Type;
+                    }
                     var result = await _UserService.UpdateUser(user);
                     return result;
                 }
