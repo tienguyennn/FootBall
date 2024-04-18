@@ -140,6 +140,10 @@ namespace N.Service.BookingService
             {
                 query = query.Where(x => x.FieldId == search.FieldId);
             }
+            if (search.OwnerId.HasValue)
+            {
+                query = query.Where(x => x.Field != null && x.Field.UserId == search.OwnerId);
+            }
             if (search.Start.HasValue)
             {
                 query = query.Where(x => x.Start >= search.Start);

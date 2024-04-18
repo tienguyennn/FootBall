@@ -214,6 +214,13 @@ namespace N.Controllers
             return await _bookingService.History(search);
         }
 
+        [HttpPost("GetData")]
+        public async Task<DataResponse<PagedList<BookingDto>>> GetData(BookingSearch search)
+        {
+            return await _bookingService.History(search);
+        }
+
+
         [HttpGet("Payment")]
         public async Task<DataResponse<string>> Payment(Guid id, string returnUrl)
         {
@@ -236,8 +243,6 @@ namespace N.Controllers
             await _bookingService.Update(booking);
             return DataResponse<Booking>.True(booking);
         }
-
-
 
 
         [HttpGet("Deposit")]
