@@ -12,7 +12,7 @@ namespace N.Service.UserService
     {
         Task<AppUser?> GetUser(string? id);
         Task<AppUserDto?> GetUserDto(Guid id);
-        Task<DataResponse> RegisterUser(string email, string name, string phone, string gender, string type, string password, string confirmPassword, string baseUri);
+        Task<DataResponse> RegisterUser(string email, string name, string phone, string gender, string type, string password, string confirmPassword,List<Guid>? areaIds, string baseUri);
         Task<DataResponse> ConfirmEmail(string email, string token);
         Task<DataResponse<AppUserDto>> LoginUser(string email, string password);
         Task<DataResponse<string>> ResetPassword(string email, string baseUri);

@@ -9,5 +9,6 @@ namespace N.Api.ViewModels.Account
         public string? Gender { get; set; }
         public string? Phone { get; set; }
         public string? Type { get; set; }
+        public List<Guid>? AreaIds { get; set; }
     }
 }

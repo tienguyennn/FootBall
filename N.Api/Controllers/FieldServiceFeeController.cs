@@ -86,7 +86,7 @@ namespace N.Controllers
             return await _fieldServiceFeeService.GetData(search);
         }
 
-        [HttpPost("Delete/{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<DataResponse> Delete(Guid id)
         {
             try

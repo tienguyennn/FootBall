@@ -9,6 +9,7 @@ using N.Service.Dto;
 using N.Service.FieldService.Dto;
 using N.Repository.FieldServiceFeeRepository;
 using N.Service.FieldServiceFeeService.Dto;
+using N.Repository.FieldAreaRepository;
 
 namespace N.Service.FieladService
 {
@@ -16,18 +17,24 @@ namespace N.Service.FieladService
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IServiceFeeRepository _serviceFeeRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IFieldAreaRepository _fieldAreaRepository;
         private readonly IFieldServiceFeeRepository _fieldServiceFeeRepository;
         private readonly IDistributedCache _cache;
         public FieldService(
             IFieldRepository fieldRepository,
             IBookingRepository bookingRepository,
             IServiceFeeRepository serviceFeeRepository,
+            IUserRepository userRepository,
+            IFieldAreaRepository fieldAreaRepository,
             IFieldServiceFeeRepository fieldServiceFeeRepository,
             IDistributedCache cache
             ) : base(fieldRepository)
         {
             this._bookingRepository = bookingRepository;
             this._serviceFeeRepository = serviceFeeRepository;
+            this._userRepository = userRepository;
+            this._fieldAreaRepository = fieldAreaRepository;
             this._fieldServiceFeeRepository = fieldServiceFeeRepository;
             this._cache = cache;
         }
@@ -64,7 +71,18 @@ namespace N.Service.FieladService
                 }
                 if (search.StaffId.HasValue)
                 {
-                    query = query.Where(x => x.StaffId == search.StaffId);
+                    //query = query.Where(x => x.StaffId == search.StaffId);
+                    var staff = _userRepository.GetById(search.StaffId.Value);
+                    if (staff != null)
+                    {
+                        var areaIds = (staff.AreaIds?.Split(",") ?? new string[0]).Select(x => (Guid?)Guid.Parse(x)).ToList();
+                        query = query.Where(x => areaIds != null && areaIds.Contains(x.FieldAreaId));
+                    }
+                    else
+                    {
+                        query = query.Where(x => false);
+                    }
+
                 }
                 if (!string.IsNullOrEmpty(search.Status))
                 {
@@ -226,6 +244,10 @@ namespace N.Service.FieladService
                         if (bookings.Any(x => x.Start >= item.Start && x.End <= item.End))
                         {
                             item.Booked = true;
+                        }
+                        if (item.Start > DateTime.Now)
+                        {
+                            item.Expired = true;
                         }
                         result.Add(item);
                     }

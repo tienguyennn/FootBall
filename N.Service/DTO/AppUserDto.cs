@@ -17,6 +17,8 @@ namespace N.Service.Dto
         public string? Phone { get; set; }
         public string? Gender { get; set; }
         public string? Picture { get; set; }
+        public List<Guid>? AreaIds { get; set; }
+        public List<FieldArea>? Areas { get; set; }
         public string? Type { get; set; }
         public string? Token { get; set; }
         public string? RefreshToken { get; set; }
@@ -33,6 +35,7 @@ namespace N.Service.Dto
                 Picture = user.Picture,
                 Type = user.Type,
                 Phone = user.PhoneNumber,
+                AreaIds = user.AreaIds?.Split(",")?.Select(x=> Guid.Parse(x)).ToList()
             };
         }
     }

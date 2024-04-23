@@ -9,5 +9,6 @@ namespace N.Model.Entities
         public string? Picture { get; set; }
         public string? Type { get; set; }
         public Guid? StaffId { get; set; }
+        public string? AreaIds { get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace N.Controllers
             if (ModelState.IsValid)
             {
                 var baseUri = GetUri();
-                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, model.Type, model.Password, model.ConfirmPassword, baseUri);
+                var result = await _UserService.RegisterUser(model.Email, model.Name, model.Phone, model.Gender, model.Type, model.Password, model.ConfirmPassword,model.AreaIds, baseUri);
                 return result;
             }
 
@@ -258,6 +258,15 @@ namespace N.Controllers
                     {
                         user.Type = model.Type;
                     }
+                    if (model.AreaIds != null && model.AreaIds.Any())
+                    {
+                        user.AreaIds = string.Join(",", model.AreaIds);
+                    }
+                    else
+                    {
+                        user.AreaIds = "";
+                    }
+
                     var result = await _UserService.UpdateUser(user);
                     return result;
                 }

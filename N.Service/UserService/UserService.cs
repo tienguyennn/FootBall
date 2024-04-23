@@ -11,6 +11,7 @@ using N.Core.QRCodeProvider;
 using N.Extensions;
 using N.Model;
 using N.Model.Entities;
+using N.Repository.FieldAreaRepository;
 using N.Repository.NDirectoryRepository;
 using N.Service.Common;
 using N.Service.Common.Service;
@@ -33,17 +34,20 @@ namespace N.Service.UserService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IFieldAreaRepository _fieldAreaRepository;
         private readonly IDistributedCache _cache;
         private readonly ITokenService _tokenService;
         public UserService(UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             IUserRepository userRepository,
+            IFieldAreaRepository fieldAreaRepository,
             IDistributedCache cache,
             ITokenService tokenService
             ) : base(userRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            this._fieldAreaRepository = fieldAreaRepository;
             this._cache = cache;
             this._tokenService = tokenService;
         }
@@ -62,11 +66,17 @@ namespace N.Service.UserService
             var user = await this.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (user != null)
             {
-                return AppUserDto.FromAppUser(user);
+                var dto = AppUserDto.FromAppUser(user);
+                if (dto != null && dto.AreaIds != null && dto.AreaIds.Any())
+                {
+                    dto.Areas = _fieldAreaRepository.GetQueryable().Where(x => dto.AreaIds.Contains(x.Id)).ToList();
+                }
+                return dto;
             }
+
             return null;
         }
-        public async Task<DataResponse> RegisterUser(string email, string name, string phone, string gender, string type, string password, string confirmPassword, string baseUri)
+        public async Task<DataResponse> RegisterUser(string email, string name, string phone, string gender, string type, string password, string confirmPassword, List<Guid>? areaIds, string baseUri)
         {
             if (await _userManager.FindByEmailAsync(email) != null)
             {
@@ -106,8 +116,13 @@ namespace N.Service.UserService
                 Name = name,
                 PhoneNumber = phone,
                 Type = type,
-                Gender = gender
+                Gender = gender,
             };
+
+            if (areaIds != null && areaIds.Any())
+            {
+                user.AreaIds = string.Join(",", areaIds);
+            }
             if (type == AccountTypeConstant.Staff || type == AccountTypeConstant.Manager)
             {
                 user.EmailConfirmed = true;
@@ -338,7 +353,7 @@ namespace N.Service.UserService
 
         }
 
-        public  async Task<DataResponse<AppUserDto>> UpdateUser(AppUser user)
+        public async Task<DataResponse<AppUserDto>> UpdateUser(AppUser user)
         {
             var result = new DataResponse<AppUserDto>();
             try
@@ -383,7 +398,7 @@ namespace N.Service.UserService
                     user.Picture = fileName;
                     try
                     {
-                         await Update(user);
+                        await Update(user);
                         result.Success = true;
                         result.Message = "Update user successfully";
                         result.Data = AppUserDto.FromAppUser(user);
@@ -482,18 +497,19 @@ namespace N.Service.UserService
         {
             try
             {
-                var query = from q in GetQueryable()
-                            select new AppUserDto()
-                            {
-                                Id = q.Id,
-                                Name = q.Name,
-                                StaffId = q.StaffId,
-                                Picture = q.Picture,
-                                Type = q.Type,
-                                Email = q.Email,
-                                Gender = q.Gender,
-                                Phone = q.PhoneNumber,
-                            };
+                var query = (from q in GetQueryable().ToList()
+                             select new AppUserDto()
+                             {
+                                 Id = q.Id,
+                                 Name = q.Name,
+                                 StaffId = q.StaffId,
+                                 Picture = q.Picture,
+                                 Type = q.Type,
+                                 Email = q.Email,
+                                 Gender = q.Gender,
+                                 Phone = q.PhoneNumber,
+                                 AreaIds = q.AreaIds?.Split(",")?.Select(x => Guid.Parse(x)).ToList(),
+                             }).AsQueryable();
 
                 if (search.StaffId.HasValue)
                 {
@@ -516,6 +532,13 @@ namespace N.Service.UserService
                 }
 
                 var result = PagedList<AppUserDto>.Create(query, search);
+                foreach (var item in result.Items)
+                {
+                    if (item.AreaIds != null && item.AreaIds.Any())
+                    {
+                        item.Areas = _fieldAreaRepository.GetQueryable().Where(x => item.AreaIds.Contains(x.Id)).ToList();
+                    }
+                }
                 return new DataResponse<PagedList<AppUserDto>>()
                 {
                     Data = result,

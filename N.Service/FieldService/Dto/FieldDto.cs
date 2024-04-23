@@ -12,5 +12,6 @@ namespace N.Service.FieldService.Dto
     {
         public List<FieldTime>? FieldTimes { get; set; }
         public List<FieldServiceFeeDto>? Services { get; set; }
+        public List<FieldArea>? FieldAreas { get; set; }
     }
 }

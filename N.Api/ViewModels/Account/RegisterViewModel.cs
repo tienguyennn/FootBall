@@ -11,5 +11,6 @@ namespace N.Api.ViewModels.Account
         public string? Type { get; set; }
         public string? Password { get; set; }
         public string? ConfirmPassword { get; set; }
+        public List<Guid>? AreaIds { get; set; }
     }
 }
