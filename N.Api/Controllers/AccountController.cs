@@ -298,5 +298,29 @@ namespace N.Controllers
             };
         }
 
+
+        [HttpDelete("Delete/{id}")]
+        public async Task<DataResponse> Delete(Guid id)
+        {
+            try
+            {
+                var entity = _UserService.GetById(id);
+                if (entity == null)
+                    return DataResponse.False("Can't find user");
+                await _UserService.Delete(entity);
+                return new DataResponse()
+                {
+                    Success = true,
+                    Message = "Success",
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return DataResponse.False(ex.Message);
+            }
+        }
+
+
     }
 }
