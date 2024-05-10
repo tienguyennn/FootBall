@@ -67,7 +67,7 @@ namespace N.Service.PaymentService
             if (booking != null)
             {
 
-                var amount = booking.Price / 10;
+                var amount = booking.Price / 30;
                 if (!amount.HasValue || amount < 10000)
                 {
                     amount = 10000;
