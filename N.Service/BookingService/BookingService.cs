@@ -47,6 +47,61 @@ namespace N.Service.BookingService
             return booked;
         }
 
+        public async Task<DataResponse<List<BookingDto>>> GetBookingActive(Guid? userId)
+        {
+            var result = await (from q in GetQueryable().Where(x => x.Start >= DateTime.Now)
+                                join user in _userRepository.GetQueryable().Where(x => x.Id == userId)
+                                on q.UserId equals user.Id
+                                join field in _fieldRepository.GetQueryable()
+                                on q.FieldId equals field.Id
+                                select new BookingDto()
+                                {
+                                    Description = q.Description,
+                                    Id = q.Id,
+                                    UserId = q.UserId,
+                                    Price = q.Price,
+                                    Status = q.Status,
+                                    DateTime = q.DateTime,
+                                    End = q.End,
+                                    FieldId = q.FieldId,
+                                    Start = q.Start,
+                                    Paid = q.Paid,
+                                    Deposited = q.Deposited,
+                                    CreatedDate = q.CreatedDate,
+                                    User = AppUserDto.FromAppUser(user),
+                                    Field = field,
+                                }).ToListAsync();
+
+            foreach (var item in result)
+            {
+                var payments = _serviceFeePaymentRepository.GetQueryable()
+                    .Where(x => x.BookingId == item.Id).Select(x => new ServiceFeePaymentDto()
+                    {
+                        Id = x.Id,
+                        BookingId = item.Id,
+                        DateTime = x.DateTime,
+                        Description = x.Description,
+                        FieldServiceFeeId = x.FieldServiceFeeId,
+                        Price = x.Price,
+                    }).ToList();
+                foreach (var payment in payments)
+                {
+                    payment.FieldService = (await _fieldServiceFeeService.GetDto(payment.FieldServiceFeeId ?? Guid.Empty)).Data;
+                }
+                item.Services = payments;
+                if (item.Services != null && item.Services.Any())
+                {
+                    item.Price = item.Price ?? 0;
+                    foreach (var service in item.Services)
+                    {
+                        item.Price += service.Price ?? 0;
+                    }
+                }
+            }
+
+            return DataResponse<List<BookingDto>>.True(result);
+        }
+
         public async Task<DataResponse<BookingDto>> GetDto(Guid id)
         {
             var query = await (from q in GetQueryable().Where(x => x.Id == id)

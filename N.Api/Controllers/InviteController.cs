@@ -41,6 +41,7 @@ namespace N.Controllers
                         InviteTeamId = model.InviteTeamId,
                         Description = model.Description,
                         EnviteTime = DateTime.Now,
+                        BookingId = model.BookingId,
                     };
 
                     await _inviteService.Create(entity);
@@ -76,15 +77,15 @@ namespace N.Controllers
             return DataResponse<Invite>.False("Some properties are not valid", ModelStateError);
         }
         [HttpGet("Get/{id}")]
-        public DataResponse<InviteDto> Get(Guid id)
+        public async Task<DataResponse<InviteDto>> Get(Guid id)
         {
-            return _inviteService.GetDto(id);
+            return await _inviteService.GetDto(id);
         }
 
         [HttpPost("GetData")]
-        public DataResponse<PagedList<InviteDto>> GetData([FromBody] InviteSearch search)
+        public async Task<DataResponse<PagedList<InviteDto>>> GetData([FromBody] InviteSearch search)
         {
-            return _inviteService.GetData(search);
+            return await _inviteService.GetData(search);
         }
 
         [HttpPost("Accept")]
@@ -118,12 +119,10 @@ namespace N.Controllers
 
         }
 
-
-
         [HttpGet("InviteMe")]
-        public DataResponse<PagedList<InviteDto>> InviteMe()
+        public async Task<DataResponse<PagedList<InviteDto>>> InviteMe()
         {
-            return _inviteService.GetData(new InviteSearch()
+            return await _inviteService.GetData(new InviteSearch()
             {
                 UserId = UserId,
                 PageSize = 10000,
@@ -133,9 +132,9 @@ namespace N.Controllers
         }
 
         [HttpGet("IAccepted")]
-        public DataResponse<PagedList<InviteDto>> IAccepted()
+        public async Task<DataResponse<PagedList<InviteDto>>> IAccepted()
         {
-            return _inviteService.GetData(new InviteSearch()
+            return await _inviteService.GetData(new InviteSearch()
             {
                 UserId = UserId,
                 PageSize = 10000,
@@ -145,9 +144,9 @@ namespace N.Controllers
         }
 
         [HttpGet("IReject")]
-        public DataResponse<PagedList<InviteDto>> IReject()
+        public async Task<DataResponse<PagedList<InviteDto>>> IReject()
         {
-            return _inviteService.GetData(new InviteSearch()
+            return await _inviteService.GetData(new InviteSearch()
             {
                 UserId = UserId,
                 PageSize = 10000,
@@ -158,9 +157,9 @@ namespace N.Controllers
 
 
         [HttpGet("IInvite")]
-        public DataResponse<PagedList<InviteDto>> IInvite()
+        public async Task<DataResponse<PagedList<InviteDto>>> IInvite()
         {
-            return _inviteService.GetData(new InviteSearch()
+            return await _inviteService.GetData(new InviteSearch()
             {
                 UserInviteId = UserId,
                 PageSize = 10000,
@@ -170,11 +169,10 @@ namespace N.Controllers
         }
 
 
-
         [HttpGet("AcceptedMe")]
-        public DataResponse<PagedList<InviteDto>> AcceptedMe()
+        public async Task<DataResponse<PagedList<InviteDto>>> AcceptedMe()
         {
-            return _inviteService.GetData(new InviteSearch()
+            return await _inviteService.GetData(new InviteSearch()
             {
                 UserInviteId = UserId,
                 PageSize = 10000,
@@ -184,9 +182,9 @@ namespace N.Controllers
         }
 
         [HttpGet("RejectMe")]
-        public DataResponse<PagedList<InviteDto>> RejectMe()
+        public async Task<DataResponse<PagedList<InviteDto>>> RejectMe()
         {
-            return _inviteService.GetData(new InviteSearch()
+            return await _inviteService.GetData(new InviteSearch()
             {
                 UserInviteId = UserId,
                 PageSize = 10000,
@@ -194,13 +192,6 @@ namespace N.Controllers
                 All = null,
             });
         }
-
-
-
-
-
-
-
 
     }
 }

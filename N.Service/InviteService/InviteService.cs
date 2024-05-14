@@ -6,6 +6,8 @@ using N.Service.Common;
 using N.Service.Dto;
 using N.Repository.NDirectoryRepository;
 using N.Repository.TeamRepository;
+using N.Repository.BookingRepository;
+using N.Service.BookingService;
 
 namespace N.Service.InviteService
 {
@@ -13,18 +15,21 @@ namespace N.Service.InviteService
     {
         private readonly IUserRepository _userRepository;
         private readonly ITeamRepository _teamRepository;
+        private readonly IBookingService _bookingService;
 
         public InviteService(
             IUserRepository userRepository,
             ITeamRepository teamRepository,
-            IInviteRepository inviteRepository
+            IInviteRepository inviteRepository,
+            IBookingService bookingService
             ) : base(inviteRepository)
         {
             this._userRepository = userRepository;
             this._teamRepository = teamRepository;
+            this._bookingService = bookingService;
         }
 
-        public DataResponse<PagedList<InviteDto>> GetData(InviteSearch search)
+        public async Task<DataResponse<PagedList<InviteDto>>> GetData(InviteSearch search)
         {
             try
             {
@@ -42,6 +47,7 @@ namespace N.Service.InviteService
                                 InviteTeamId = q.InviteTeamId,
                                 TeamId = q.TeamId,
                                 Team = team,
+                                BookingId = q.BookingId,
                                 InviteTeam = inviteTeam,
                                 CreatedDate = q.CreatedDate,
                             };
@@ -68,6 +74,15 @@ namespace N.Service.InviteService
                 query = query.OrderByDescending(x => x.CreatedDate);
 
                 var result = PagedList<InviteDto>.Create(query, search);
+
+                foreach (var item in result.Items)
+                {
+                    if (item.BookingId.HasValue)
+                    {
+                        item.Booking = (await _bookingService.GetDto(item.BookingId.Value)).Data;
+                    }
+                }
+
                 return new DataResponse<PagedList<InviteDto>>()
                 {
                     Data = result,
@@ -82,7 +97,7 @@ namespace N.Service.InviteService
 
         }
 
-        public DataResponse<InviteDto> GetDto(Guid id)
+        public async Task<DataResponse<InviteDto>> GetDto(Guid id)
         {
             try
             {
@@ -99,9 +114,19 @@ namespace N.Service.InviteService
                                 EnviteTime = q.EnviteTime,
                                 InviteTeamId = q.InviteTeamId,
                                 TeamId = q.TeamId,
+                                CreatedDate = q.CreatedDate,
+                                BookingId = q.BookingId,
                                 Team = team,
                                 InviteTeam = inviteTeam,
                             }).FirstOrDefault();
+
+                if (item != null)
+                {
+                    if (item.BookingId.HasValue)
+                    {
+                        item.Booking = (await _bookingService.GetDto(item.BookingId.Value)).Data;
+                    }
+                }
 
                 return new DataResponse<InviteDto>()
                 {

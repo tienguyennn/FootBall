@@ -9,5 +9,6 @@ namespace N.Model.Entities
         public bool? Accepted { get; set; }
         public DateTime? EnviteTime { get; set; }
         public string? Description { get; set; }
+        public Guid? BookingId { get; set; }
     }
 }

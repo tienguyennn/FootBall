@@ -12,5 +12,6 @@ namespace N.Service.BookingService
         Task<DataResponse<PagedList<BookingDto>>> History(BookingSearch search);
         Task<DataResponse<BookingDto>> GetDto(Guid id);
         bool CheckBooked(Guid? fieldId, DateTime? start, DateTime? end, Guid? id = null);
+        Task<DataResponse<List<BookingDto>>> GetBookingActive(Guid? userId);
     }
 }

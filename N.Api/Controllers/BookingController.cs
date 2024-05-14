@@ -214,6 +214,15 @@ namespace N.Controllers
             return await _bookingService.History(search);
         }
 
+
+        [HttpPost("GetBookingActive")]
+        public async Task<DataResponse<List<BookingDto>>> GetBookingActive()
+        {
+           
+            return await _bookingService.GetBookingActive(UserId);
+        }
+
+
         [HttpPost("GetData")]
         public async Task<DataResponse<PagedList<BookingDto>>> GetData(BookingSearch search)
         {

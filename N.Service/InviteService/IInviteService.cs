@@ -8,7 +8,7 @@ namespace N.Service.InviteService
 {
     public interface IInviteService : IService<Invite>
     {
-        DataResponse<PagedList<InviteDto>> GetData(InviteSearch search);
-        DataResponse<InviteDto> GetDto(Guid id);
+        Task<DataResponse<PagedList<InviteDto>>> GetData(InviteSearch search);
+        Task<DataResponse<InviteDto>> GetDto(Guid id);
     }
 }
